@@ -1,5 +1,5 @@
 import {ToDoListDarkTheme} from './../../Themes/ToDoListDarkTheme';
-import {ADD_TASK, CHANGE_THEME, DONE_TASK, DELETE_TASK} from './../types/ToDoListTypes';
+import {ADD_TASK, CHANGE_THEME, DONE_TASK, DELETE_TASK, EDIT_TASK, UPDATE_TASK} from './../types/ToDoListTypes';
 import {arrTheme} from '../../Themes/ThemeManager';
 const initialState = {
     themeToDoList: ToDoListDarkTheme,
@@ -7,7 +7,8 @@ const initialState = {
         {id: 'task-1', taskName: 'task 1', done: true},
         {id: 'task-2', taskName: 'task 2', done: false},
         {id: 'task-3', taskName: 'task 3', done: true}
-    ]
+    ],
+    taskEdit: {id: '-1', taskName: '', done: false},
 }
 
 const ToDoListReducer = ( state =initialState, action)=>{
@@ -38,7 +39,7 @@ const ToDoListReducer = ( state =initialState, action)=>{
         }
         case DONE_TASK:{
             let taskListUpdate = [...state.taskList];
-            let index = taskListUpdate.findIndex(task => task.id == action.taskId);
+            let index = taskListUpdate.findIndex(task => task.id === action.taskId);
             if ( index !== -1 ){
                 taskListUpdate[index].done = true;
             }
@@ -55,6 +56,21 @@ const ToDoListReducer = ( state =initialState, action)=>{
             // method-2 : using filter
             taskListUpdate = taskListUpdate.filter(task => task.id !== action.taskId);
             return {...state, taskList: taskListUpdate};
+        }
+        case UPDATE_TASK:{
+            console.log(action.taskName);
+            state.taskEdit = {...state.taskEdit, taskName: action.taskName}; 
+            let taskListUpdate = [...state.taskList];
+            let index = taskListUpdate.findIndex(task => task.id == state.taskEdit.id);
+            if ( index !== -1){
+                taskListUpdate[index] = state.taskEdit;
+            }
+            state.taskList = taskListUpdate;
+            state.taskEdit = {id:'-1',taskName: '', done: false};
+            return {...state};
+        }
+        case EDIT_TASK:{
+            return {...state, taskEdit: action.task}
         }
         default:
             return {...state};

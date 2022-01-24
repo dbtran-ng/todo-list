@@ -13,6 +13,9 @@ export const Button = styled.button`
         background-color:${props => props.theme.bgColor};
         border: ${props => props.theme.borderButton};
     };
+    &:disabled{
+        cursor: no-drop;
+    }
 `;
 
 
